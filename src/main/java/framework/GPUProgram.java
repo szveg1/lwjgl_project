@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL33.*;
 public class GPUProgram {
     private int vertexShaderId, fragmentShaderId, geometryShaderId, shaderProgramId;
 
+    private static GPUProgram instance = null;
+
     private void getErrorInfo(int handle) {
         int logLength = glGetShaderi(handle, GL_INFO_LOG_LENGTH);
         if (logLength > 0) {
@@ -26,6 +28,14 @@ public class GPUProgram {
         return location;
     }
 
+    private GPUProgram(){}
+
+    public static GPUProgram getInstance(){
+        if(instance == null)
+            instance = new GPUProgram();
+        return instance;
+    }
+    
     public int getId(){
         return shaderProgramId;
     }
@@ -104,5 +114,30 @@ public class GPUProgram {
 
         glUseProgram(shaderProgramId);
         return true;
+    }
+
+    public void setUniform(int i, String name){
+        int location = getLocation(name);
+        if(location >= 0) glUniform1i(location, i);
+    }
+
+    public void setUniform(float f, String name){
+        int location = getLocation(name);
+        if(location >= 0) glUniform1f(location, f);
+    }
+
+    public void setUniform(vec2 v, String name){
+        int location = getLocation(name);
+        if(location >= 0) glUniform2f(location, v.x, v.y);
+    }
+
+    public void setUniform(vec3 v, String name){
+        int location = getLocation(name);
+        if(location >= 0) glUniform3f(location, v.x, v.y, v.z);
+    }
+
+    public void setUniform(vec4 v, String name){
+        int location = getLocation(name);
+        if(location >= 0) glUniform4f(location, v.x, v.y, v.z, v.w);
     }
 }
